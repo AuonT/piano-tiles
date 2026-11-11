@@ -6,6 +6,7 @@
 # - Put big chunks of code in functions/classes (or in objects.py) and just CALL them here.
 #   Fewer changed lines in main.py = fewer merge conflicts.
 # - Don't rename the shared variables below without telling the group.
+#hello
 
 import random
 import pygame
