@@ -19,7 +19,7 @@ We're following pyGuru's [Piano Tiles Clone with pygame](https://www.youtube.com
 
 ## Getting started
 
-1. Install Python 3.10+ and then pygame: `pip install pygame`
+1. Install Python 3.10+ and then pygame-ce: `pip install pygame-ce` (works on Python 3.10 to 3.15; the code still says `import pygame`)
 2. Clone the repo: `git clone https://github.com/AuonT/piano-tiles.git`
 3. Run the game: `python main.py`
 
@@ -44,7 +44,7 @@ Each member watches their videos, writes that part, and changes anything mouse-b
 - Part 1: game window, background image, game loop, FPS, quit with ESC/Q
 - Part 5: home page (piano image, title, "Press SPACE to start") and game over screen ("Game over", score, "R to replay, M for sound, Q to quit")
 - Use key presses instead of the Start / Replay / Close / Sound buttons
-- Keep `main.py` organized with clear sections so the others can add their parts; review Pull Requests
+- Keep `main.py` organized with clear sections so the others can add their parts; help fix merge conflicts
 
 ### Member 2: Tiles (Part 2)
 - `Tile` class in `objects.py`: drawing, moving down, removing itself off-screen, greyed out when hit (`alive = False`)
@@ -68,15 +68,18 @@ Each member watches their videos, writes that part, and changes anything mouse-b
 ## Order to build it in
 
 1. Member 1 pushes the window and game loop (Part 1) first, plus the `Assets/`, `Sounds/` and `Fonts/` folders from the tutorial's source code
-2. Members 2, 3 and 4 build their parts on their own branches
-3. Each member connects their own part into `main.py` through a Pull Request; Member 1 reviews and helps fix conflicts
+2. Members 2, 3 and 4 add their parts in their own labelled sections of `main.py`
+3. Everyone pulls and pushes small changes often; Member 1 helps fix conflicts
 4. Everyone tests together, fixes bugs, and adds polish
 
 ## How we use Git
 
-- Never code directly on `main`. Make a branch for your part: `git checkout -b tiles` (or `controls`, `screens`, `sound`)
-- Commit often with clear messages, e.g. `Add Tile class with move and draw`
-- Push your branch and open a Pull Request; one other member reviews it before merging
-- Run `git pull` on `main` before starting new work so you have everyone's latest code
-- Each part is an Issue in the Issues tab; assign yourself to yours
+We all work on `main.py` on the `main` branch and push straight to GitHub. Full steps are in [docs/GIT_STEPS.md](docs/GIT_STEPS.md).
+
+- `git pull` before you start coding, every time
+- Only edit your own labelled sections of `main.py`
+- Commit and push small changes often, and `git pull` right before every `git push`
+- Run `python main.py` before every push so nobody pulls broken code
+- Never use `git push --force`
+- Say "pushing now" in the group chat
 - Credit the tutorial in your report, since our code is based on it
