@@ -1,6 +1,6 @@
 # Member 1: Window and screens
 
-**Branch:** `screens`  **Issue:** #1
+**Issue:** #1
 **Videos:** [Part 1: Game window](https://www.youtube.com/watch?v=t1GaunoW0Tc), [Part 5: Start and end screens](https://www.youtube.com/watch?v=_VvOedsZl5w)
 **Your sections in `main.py`:** SETTINGS, IMAGES & FONTS, "Member 1: screens" functions, HOME PAGE, and the SPACE / R keys
 
@@ -9,7 +9,7 @@ You go first: the others build on top of your setup. Git commands are in [GIT_ST
 ## Step 1: Assets (do this first, push it right away)
 - [ ] Download the `Assets/`, `Fonts/` and `Sounds/` folders and `notes.json` from the [tutorial source](https://github.com/pyGuru123/Python-Games/tree/master/Piano%20Tiles) (on GitHub: go up to the repo page, **Code → Download ZIP**, then copy the folders out)
 - [ ] Put them in the root of our repo, next to `main.py`. Keep the exact folder names (capital A, F, S)
-- [ ] Commit, push, open a Pull Request and merge it so everyone has the files
+- [ ] Commit and push so everyone has the files
 
 ## Step 2: Window (Part 1)
 - [ ] Load `Assets/bg.png` in IMAGES & FONTS and draw it instead of `win.fill(BLACK)`
@@ -29,7 +29,7 @@ You go first: the others build on top of your setup. Git commands are in [GIT_ST
 His `Button` class uses the mouse. We don't need it. Every button becomes a key press.
 
 ## Also your job
-- Review other members' Pull Requests and help fix merge conflicts in `main.py`
+- Help fix merge conflicts in `main.py`
 - Keep the labelled sections tidy
 
 ## Done when
