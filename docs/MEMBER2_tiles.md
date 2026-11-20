@@ -1,6 +1,6 @@
 # Member 2: Tiles
 
-**Branch:** `tiles`  **Issue:** #2
+**Issue:** #2
 **Video:** [Part 2: Creating tiles](https://www.youtube.com/watch?v=LHqiU4hc5_0)
 **Your files:** `objects.py` (`Tile` class), plus the "Member 2" spots in `main.py` (GROUPS, functions, GAME PAGE)
 
