@@ -1,6 +1,6 @@
 # Member 4: Sound and effects
 
-**Branch:** `sound`  **Issue:** #4
+**Issue:** #4
 **Videos:** [Part 4: Playing piano](https://www.youtube.com/watch?v=manti3I6hY0), [Part 6: Scores, animations and fall effects](https://www.youtube.com/watch?v=l0yGzZCnVVc)
 **Your files:** `Text`, `Counter`, `Square` classes in `objects.py`, plus the SOUNDS section and "Member 4" spots in `main.py`
 

@@ -1,6 +1,6 @@
 # Member 3: Arrow key controls and score
 
-**Branch:** `controls`  **Issue:** #3
+**Issue:** #3
 **Videos:** [Part 3: Tile clicks](https://www.youtube.com/watch?v=s4_ApCTvYtg) (watch to understand it, then replace the clicks), score part of [Part 6](https://www.youtube.com/watch?v=l0yGzZCnVVc)
 **Your spots in `main.py`:** the "Member 3" function, the arrow key line in EVENTS, and the score drawing in GAME PAGE
 
