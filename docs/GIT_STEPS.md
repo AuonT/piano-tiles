@@ -1,54 +1,56 @@
 # Git steps for everyone
 
-Your **workspace** is your own branch. You code there, and nothing you do can break anyone else's work until your Pull Request is merged.
+We all work on the `main` branch and push straight to GitHub. Everyone edits `main.py`, but **only inside their own labelled section**, so Git can combine everyone's changes on its own.
 
-| Member | Branch | Guide |
+| Member | Part | Guide |
 |---|---|---|
-| 1 | `screens` | [MEMBER1_screens.md](MEMBER1_screens.md) |
-| 2 | `tiles` | [MEMBER2_tiles.md](MEMBER2_tiles.md) |
-| 3 | `controls` | [MEMBER3_controls.md](MEMBER3_controls.md) |
-| 4 | `sound` | [MEMBER4_sound.md](MEMBER4_sound.md) |
+| 1 | Window and screens | [MEMBER1_screens.md](MEMBER1_screens.md) |
+| 2 | Tiles | [MEMBER2_tiles.md](MEMBER2_tiles.md) |
+| 3 | Arrow keys and score | [MEMBER3_controls.md](MEMBER3_controls.md) |
+| 4 | Sound and effects | [MEMBER4_sound.md](MEMBER4_sound.md) |
 
 ## First time only
 
 ```bash
 git clone https://github.com/AuonT/piano-tiles.git
 cd piano-tiles
-pip install pygame
-git checkout tiles        # use YOUR branch name
+pip install pygame-ce
+git checkout main
 python main.py            # a black window with a blue border = working
 ```
+
+Use **pygame-ce** (not `pygame`). It works on Python 3.10 to 3.15, and you still write `import pygame` in the code.
 
 You need to be added as a collaborator on the repo before you can push. Send Auon your GitHub username.
 
 ## Every time you sit down to code
 
 ```bash
-git checkout main
-git pull                  # get everyone's latest merged work
-git checkout tiles        # YOUR branch
-git merge main            # bring that latest work into your branch
+git pull                  # get everyone's latest work FIRST
 ```
 
-## Saving your work
+## Every time one thing works
 
 ```bash
+python main.py            # check the game still runs
 git add .
-git commit -m "Add Tile class with move and draw"   # say what you did
+git commit -m "Tiles fall and spawn"     # say what you did
+git pull                  # get anything pushed while you were coding
+python main.py            # check it still runs with their code
 git push
 ```
 
-Commit small and often (every time something works), not one giant commit at the end.
+Push small and often, not one giant push at the end. Post "pushing now" in the group chat.
 
-## When your part works: Pull Request
+## If your push is "rejected"
 
-1. Run `python main.py` and check the game still runs.
-2. Push your branch (`git push`).
-3. On GitHub, click **Compare & pull request**, set **base: main** and **compare: your branch**.
-4. Write what you added and link your issue (for example "Closes #2").
-5. Ask one other member to review, then merge.
+Someone pushed before you. Nothing is broken:
 
-Merge **one Pull Request at a time**. After each merge, everyone runs the "every time you sit down" steps above.
+```bash
+git pull
+python main.py
+git push
+```
 
 ## If you get a merge conflict
 
@@ -59,10 +61,10 @@ Git shows something like this in the file:
 your code
 =======
 someone else's code
->>>>>>> main
+>>>>>>> 1a2b3c4
 ```
 
-Keep the lines you need from **both** sides, delete the `<<<<<<<`, `=======`, `>>>>>>>` lines, save, then:
+Usually you want to keep **both** sides. Delete only the `<<<<<<<`, `=======`, `>>>>>>>` lines, save, run the game, then:
 
 ```bash
 git add .
@@ -70,11 +72,13 @@ git commit -m "Fix merge conflict"
 git push
 ```
 
-VS Code shows **Accept Current / Accept Incoming / Accept Both** buttons above conflicts, which makes this easier. If you're stuck, ask the group before deleting anything.
+VS Code shows **Accept Current / Accept Incoming / Accept Both** buttons above conflicts. **Accept Both** is usually right. If you're unsure, ask the person whose code it is before deleting anything.
 
 ## Rules
 
-- Never commit directly to `main`.
+- `git pull` before you start, and right before every push.
 - Only edit **your** labelled sections in `main.py`.
 - Don't rename shared variables (`score`, `speed`, `game_over`, `TILE_WIDTH`...) without telling the group.
-- Run the game before every push.
+- Run the game before every push. Never push code that crashes.
+- **Never** use `git push --force`. It deletes other people's work.
+- Don't use `git add .` if there are files in the folder that aren't part of the game (like random images). Use `git add main.py` instead.
