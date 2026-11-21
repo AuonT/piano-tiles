@@ -159,9 +159,24 @@ def get_lowest_tile(tile_group): #returns the lowest tile that is still alive
 # STEP A: make a font for the score text (only once, so it goes here, NOT in the loop).
 #   Hint: pygame.font.SysFont(None, 32) makes a basic font at size 32.
 #   Save it in a variable, for example called score_font.
-
+score_font = pygame.font.SysFont(None, 32)
 
 def handle_arrow_key(key):
+    global score, high_score, game_over
+    pressed_column = KEY_TO_COLUMN[key]
+    target_tile = get_lowest_tile(tile_group)
+    if target_tile is None:
+        return
+    target_column = tile.rect.x//TILE_WIDTH
+    if pressed_column == target_column:
+        target_tile.alive = False
+        score += 1
+        if score > high_score:
+            high_score = score
+            # Harmanpal: play note and +1 here
+        else:
+            game_over = True
+            # Harmanpal: buzzer here
     # This runs every time the player presses an arrow key.
     # `key` tells you WHICH arrow was pressed (pygame.K_LEFT, K_DOWN, K_UP or K_RIGHT).
 
@@ -193,7 +208,7 @@ def handle_arrow_key(key):
     #     - end the game                  (Hint: game_over)
     #     - add this comment for Harmanpal:  # Harmanpal: buzzer here
 
-    pass   # delete this line once you've written your steps above
+       # delete this line once you've written your steps above
 
 # When it works:
 #   - right arrow on the right column -> tile turns grey, score goes up
@@ -236,6 +251,11 @@ while running:
             #   - later: the 3-2-1 countdown is finished (ask Harmanpal what to check)
             # Hint: ONE `if` line with `and` between the conditions, then call the
             # function on the next line and give it event.key
+            if event.key in KEY_TO_COLUMN and game_page and not game_over:
+                handle_arrow_key(event.key)
+                 #and whatever variable harman designates as countdown_finshed in this statement aswell
+    
+
 
     # ---------- DRAW BACKGROUND ----------
     win.fill(BLACK)   # Darius: replace with the background image
@@ -265,6 +285,10 @@ while running:
         #   2. Stamp the picture on the window:  win.blit(picture, (x, y))
         #      Try (10, 10) for the score and (180, 10) for the high score.
         #   Do both for score AND high_score (4 lines total).
+        score_text = score_font.render(f"Score:{score}", True, WHITE)
+        high_score_text = score_font.render(f"High Score:{high_score}", True, WHITE)
+        win.blit(score_text,(10,10))
+        win.blit(high_score_text,(180,10))
 
         # column lines
         for i in range(4):
