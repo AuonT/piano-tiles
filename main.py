@@ -16,6 +16,7 @@
 import json
 import random
 import pygame
+from threading import Thread
 
 pygame.init()
 
@@ -54,10 +55,10 @@ clock = pygame.time.Clock()
 # SOUNDS & NOTES (Harmanpal)
 # =============================================================================
 # Load notes.json, buzzer sound and background music here (Part 4)
-with open('notes.json') as file: #This calls upon/opens the json file containing the lists
-    notes_dict = json.load(file) #This creates a dictionary which stores the lists which contain song keys
-notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
-note_counts = 0
+buzzer_sound = pygame.mixer.Sound("Sounds/buzzer.mp3") 
+pygame.mixer.music.load("Sounds/background_music.mp3")
+pygame.mixer.music.set_volume(0.5)  #This sets the volume of the background music to a value from 0-1
+pygame.mixer.music.play(-1)  #This causes the bg music to loop infinetly until the game is closed
 
 
 # =============================================================================
@@ -217,7 +218,16 @@ def handle_arrow_key(key):
 
 
 # --- Harmanpal Banwait (HB): sound and effects ---
-# def play_note(): ...
+def play_note(notePath):
+    pygame.mixer.Sound(notePath).play()
+
+with open('notes.json') as file: #This calls upon/opens the json file containing the lists
+    notes_dict = json.load(file) #This creates a dictionary which stores the lists which contain song keys
+
+notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
+notes_counts = 0
+pygame.mixer.set_num_channels(len(notes_lists)) #This sets the number of channels to the length of the list so that all notes can be played at once
+
 
 
 # --- Darius Malich (DM): screens ---
