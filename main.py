@@ -1,9 +1,15 @@
 # Piano Tiles - CHE 120 group project
 # Based on pyGuru's "Piano Tiles Clone with pygame" tutorial, played with the arrow keys.
 #
+# GROUP MEMBERS
+#   Darius Malich (DM)       GitHub: dmalich6-byte   window and screens
+#   Auon Tippu (AT)          GitHub: AuonT           tiles
+#   Gurmanpal Banwait (GB)   GitHub: gurmy-b         arrow keys and score
+#   Harmanpal Banwait (HB)   GitHub: hbanwait120     sound and effects
+#
 # HOW TO USE THIS FILE
 # - Each member only adds code inside their own labelled section.
-# - Put big chunks of code in functions/classes (or in objects.py) and just CALL them here.
+# - Put big chunks of code in functions/classes in your section and just CALL them in the loop.
 #   Fewer changed lines in main.py = fewer merge conflicts.
 # - Don't rename the shared variables below without telling the group.
 #gurm
@@ -11,12 +17,10 @@
 import random
 import pygame
 
-# from objects import Tile, Text, Counter, Square   # uncomment once these classes exist in objects.py
-
 pygame.init()
 
 # =============================================================================
-# SETTINGS (Member 1) - shared numbers everyone uses
+# SETTINGS (Darius) - shared numbers everyone uses
 # =============================================================================
 SCREEN = WIDTH, HEIGHT = 288, 512
 TILE_WIDTH = WIDTH // 4
@@ -41,23 +45,23 @@ pygame.display.set_caption("Piano Tiles")
 clock = pygame.time.Clock()
 
 # =============================================================================
-# IMAGES & FONTS (Member 1)
+# IMAGES & FONTS (Darius)
 # =============================================================================
 # Load Assets/ images and Fonts/ here (Part 1 and Part 5)
 
 
 # =============================================================================
-# SOUNDS & NOTES (Member 4)
+# SOUNDS & NOTES (Harmanpal)
 # =============================================================================
 # Load notes.json, buzzer sound and background music here (Part 4)
 
 
 # =============================================================================
-# GROUPS (Member 2 + Member 4)
+# GROUPS (Auon + Harmanpal)
 # =============================================================================
-tile_group = pygame.sprite.Group()     # Member 2
-# text_group = pygame.sprite.Group()     # Member 4 ("+1" pop-ups)
-# square_group = pygame.sprite.Group()   # Member 4 (background squares)
+tile_group = pygame.sprite.Group()     # Auon
+# text_group = pygame.sprite.Group()     # Harmanpal ("+1" pop-ups)
+# square_group = pygame.sprite.Group()   # Harmanpal (background squares)
 
 
 # =============================================================================
@@ -77,7 +81,7 @@ sound_on = True
 # FUNCTIONS
 # =============================================================================
 
-# --- Member 2: tiles ---
+# --- Auon Tippu (AT): tiles ---
 class Tile(pygame.sprite.Sprite): #creates an object called tile that is a sprite and everything below is a function that is part of the tile class
     def __init__(self, x, y, win): # __init__ runs whenever a new tile is created x and y are the coordinates of the tile and win is the window that the tile will be drawn on
         super().__init__() #this runs the pygame setup first so that the tile can be drawn on the window
@@ -131,8 +135,8 @@ def get_lowest_tile(tile_group): #returns the lowest tile that is still alive
 
 
 
-# --- Member 3: arrow keys and score ---
-# =====================  BLUEPRINT FOR MEMBER 3  =====================
+# --- Gurmanpal Banwait (GB): arrow keys and score ---
+# =====================  BLUEPRINT FOR GURMANPAL BANWAIT (GB)  =====================
 # Fill in each STEP below in order. The hints tell you WHAT to use,
 # you write the actual code. Run `python main.py` after every step.
 #
@@ -141,7 +145,7 @@ def get_lowest_tile(tile_group): #returns the lowest tile that is still alive
 #
 # Things you can use (already written by others):
 #   KEY_TO_COLUMN          dictionary: arrow key -> column number 0-3 (SETTINGS, top of file)
-#   get_lowest_tile(...)   Member 2's function: gives the tile to hit next, or None
+#   get_lowest_tile(...)   Auon's function: gives the tile to hit next, or None
 #   tile.alive             True = not hit yet, False = hit (turns grey)
 #   tile.rect.x            the tile's x position in pixels
 #   TILE_WIDTH             width of one column in pixels (72)
@@ -165,7 +169,7 @@ def handle_arrow_key(key):
     #   Save it in a variable, for example pressed_column.
 
     # STEP 3: Get the tile the player is supposed to hit right now.
-    #   Hint: Member 2's get_lowest_tile function. It needs tile_group passed in.
+    #   Hint: Auon's get_lowest_tile function. It needs tile_group passed in.
     #   Save it in a variable, for example target.
 
     # STEP 4: If there's no tile to hit (target is None), stop here.
@@ -180,10 +184,10 @@ def handle_arrow_key(key):
     #     - mark the target tile as hit   (Hint: its alive attribute)
     #     - add 1 to score                (Hint: += )
     #     - if score is now bigger than high_score, make high_score equal score
-    #     - add this comment for Member 4:  # Member 4: play note and +1 here
+    #     - add this comment for Harmanpal:  # Harmanpal: play note and +1 here
     #   If they DON'T match (wrong key):
     #     - end the game                  (Hint: game_over)
-    #     - add this comment for Member 4:  # Member 4: buzzer here
+    #     - add this comment for Harmanpal:  # Harmanpal: buzzer here
 
     pass   # delete this line once you've written your steps above
 
@@ -193,18 +197,18 @@ def handle_arrow_key(key):
 #   - pressing keys on the home page or after game over does nothing (see STEP 7 in the loop)
 
 
-# --- Member 4: sound and effects ---
+# --- Harmanpal Banwait (HB): sound and effects ---
 # def play_note(): ...
 
 
-# --- Member 1: screens ---
+# --- Darius Malich (DM): screens ---
 # def draw_home_page(): ...
 # def draw_game_over(): ...
 # def reset_game(): ...   used when R is pressed
 
 
 # =============================================================================
-# MAIN GAME LOOP (Member 1 owns the structure; others add ONE-LINE calls)
+# MAIN GAME LOOP (Darius owns the structure; others add ONE-LINE calls)
 # =============================================================================
 running = True
 while running:
@@ -218,29 +222,29 @@ while running:
             if event.key in (pygame.K_ESCAPE, pygame.K_q):
                 running = False
 
-            # Member 1: SPACE starts the game from the home page
-            # Member 1: R replays after game over
-            # Member 4: M toggles sound
-            # Member 3, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
+            # Darius: SPACE starts the game from the home page
+            # Darius: R replays after game over
+            # Harmanpal: M toggles sound
+            # Gurmanpal, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
             #   - the key is an arrow key        (Hint: event.key in KEY_TO_COLUMN)
             #   - the game page is showing       (Hint: game_page)
             #   - the game is NOT over           (Hint: not game_over)
-            #   - later: the 3-2-1 countdown is finished (ask Member 4 what to check)
+            #   - later: the 3-2-1 countdown is finished (ask Harmanpal what to check)
             # Hint: ONE `if` line with `and` between the conditions, then call the
             # function on the next line and give it event.key
 
     # ---------- DRAW BACKGROUND ----------
-    win.fill(BLACK)   # Member 1: replace with the background image
-    # Member 4: update the falling background squares here
+    win.fill(BLACK)   # Darius: replace with the background image
+    # Harmanpal: update the falling background squares here
 
-    # ---------- HOME PAGE (Member 1) ----------
+    # ---------- HOME PAGE (Darius) ----------
     if home_page:
         pass  # draw_home_page()
 
     # ---------- GAME PAGE ----------
     if game_page:
-        # Member 4: 3-2-1 countdown
-        # Member 2: move tiles, spawn new tiles, check if a tile reached the bottom
+        # Harmanpal: 3-2-1 countdown
+        # Auon: move tiles, spawn new tiles, check if a tile reached the bottom
         if len(tile_group) == 0:
             add_new_tile() #when the game starts and there are no tiles yet this makes the new one.
         for tile in tile_group: #for every tile that there is it moves it down, the tile class is being used here.
@@ -250,8 +254,8 @@ while running:
                 game_over = True
         if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
             add_new_tile()
-        # Member 4: update "+1" text pop-ups
-        # Member 3, STEP 8: draw the score and high score at the top.
+        # Harmanpal: update "+1" text pop-ups
+        # Gurmanpal, STEP 8: draw the score and high score at the top.
         #   1. Turn text into a picture:  your_font.render(text, True, WHITE)
         #      The text should say e.g. "Score: 5". Hint: an f-string like f"Score: {score}"
         #   2. Stamp the picture on the window:  win.blit(picture, (x, y))
@@ -262,13 +266,13 @@ while running:
         for i in range(4):
             pygame.draw.line(win, WHITE, (TILE_WIDTH * i, 0), (TILE_WIDTH * i, HEIGHT), 1)
 
-        # Member 2: speed = int(get_speed(score) * (FPS / 1000))
+        # Auon: speed = int(get_speed(score) * (FPS / 1000))
         speed = int(get_speed(score) * (FPS / 1000))
 
         if game_over:
             speed = 0
-            # Member 4: flashing red overlay
-            # Member 1: draw_game_over()
+            # Harmanpal: flashing red overlay
+            # Darius: draw_game_over()
 
     # ---------- UPDATE SCREEN ----------
     pygame.draw.rect(win, BLUE, (0, 0, WIDTH, HEIGHT), 2)
