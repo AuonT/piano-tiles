@@ -177,6 +177,15 @@ while running:
     if game_page:
         # Member 4: 3-2-1 countdown
         # Member 2: move tiles, spawn new tiles, check if a tile reached the bottom
+        if len(tile_group) == 0:
+            add_new_tile() #when the game starts and there are no tiles yet this makes the new one.
+        for tile in tile_group: #for every tile that there is it moves it down, the tile class is being used here.
+            tile.update(speed)
+            if tile.alive and tile.rect.bottom >= HEIGHT and not gamer_over: #if the tile wasn't hit and hits the bottom turns the tile grey and ends the game.
+                tile.color = (255, 0, 0)
+                game_over = True
+        if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
+            add_new_tile()
         # Member 4: update "+1" text pop-ups
         # Member 3: draw score and high score at the top
 
