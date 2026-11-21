@@ -106,7 +106,29 @@ class Tile(pygame.sprite.Sprite): #creates an object called tile that is a sprit
 
 def get_speed(score): #returns the speed of the tiles based on the score
         return min(200 + 5 * score, 600) #means start at 200 and increase by 5 for every score but max out at 600
-# def get_lowest_tile(tile_group): ...   returns the lowest tile that is still alive
+
+def add_new_tile(): #adds a new tile to the game
+    if len(tile_group) == 0: #if there are no tiles on the screen, the new tile will be placed just above the screen
+        y = -TILE_HEIGHT #if there are no tiles on the screen, the new tile will be placed just above the screen
+        last_column = -1 #last column is set to -1 so that the first tile can be placed in any column
+    else:
+        last = tile_group.sprites()[-1] #gets the last tile that was added to the game
+        y = last.rect.top - TILE_HEIGHT #the new tile will be placed just above the last tile
+        last_column = last.rect.x // TILE_WIDTH #gets the column of the last tile that was added to the game
+
+    column = random.randint(0, 3) #randomly chooses a column for the new tile to be placed in
+    while column == last_column:
+        column = random.randint(0, 3)
+
+    tile_group.add(Tile(column * TILE_WIDTH, y, win))
+def get_lowest_tile(tile_group): #returns the lowest tile that is still alive
+    lowest = None #nothing found yet
+    for tile in tile_group: #goes through every tile one at a time.
+        if tile.alive: #skips the tiles that we already hit
+            if lowest is None or tile.rect.y > lowest.rect.y: #If we haven’t picked one yet, or this tile is lower down than the one we picked
+                lowest = tile
+    return lowest
+
 
 
 # --- Member 3: arrow keys and score ---
