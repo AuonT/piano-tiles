@@ -68,7 +68,7 @@ high_score = 0
 speed = 0
 
 home_page = True
-game_page = False
+game_page = True
 game_over = False
 sound_on = True
 
@@ -181,7 +181,7 @@ while running:
             add_new_tile() #when the game starts and there are no tiles yet this makes the new one.
         for tile in tile_group: #for every tile that there is it moves it down, the tile class is being used here.
             tile.update(speed)
-            if tile.alive and tile.rect.bottom >= HEIGHT and not gamer_over: #if the tile wasn't hit and hits the bottom turns the tile grey and ends the game.
+            if tile.alive and tile.rect.bottom >= HEIGHT and not game_over: #if the tile wasn't hit and hits the bottom turns the tile red and ends the game.
                 tile.color = (255, 0, 0)
                 game_over = True
         if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
@@ -194,6 +194,7 @@ while running:
             pygame.draw.line(win, WHITE, (TILE_WIDTH * i, 0), (TILE_WIDTH * i, HEIGHT), 1)
 
         # Member 2: speed = int(get_speed(score) * (FPS / 1000))
+        speed = int(get_speed(score) * (FPS / 1000))
 
         if game_over:
             speed = 0
