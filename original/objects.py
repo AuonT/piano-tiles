@@ -4,7 +4,10 @@
 #   Videos: https://www.youtube.com/playlist?list=PLHlrXTRZkTLDIT7mEYUcwzOXHFR47EIpN
 #
 # Group members (full names and initials):
-#   TODO: add all 4 names here, e.g.  Auon Tippu (AT)
+#   Darius Malich (DM)       GitHub: dmalich6-byte   window and screens
+#   Auon Tippu (AT)          GitHub: AuonT           tiles
+#   Gurmanpal Banwait (GB)   GitHub: gurmy-b         arrow keys and score
+#   Harmanpal Banwait (HB)   GitHub: hbanwait120     sound and effects
 #
 # Initial every comment you add, e.g.  # AT: this moves the tile down by speed each frame
 # =============================================================================
