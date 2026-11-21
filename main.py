@@ -55,7 +55,7 @@ clock = pygame.time.Clock()
 # =============================================================================
 # GROUPS (Member 2 + Member 4)
 # =============================================================================
-# tile_group = pygame.sprite.Group()     # Member 2
+tile_group = pygame.sprite.Group()     # Member 2
 # text_group = pygame.sprite.Group()     # Member 4 ("+1" pop-ups)
 # square_group = pygame.sprite.Group()   # Member 4 (background squares)
 
@@ -104,7 +104,8 @@ class Tile(pygame.sprite.Sprite): #creates an object called tile that is a sprit
 
         self.win.blit(self.surface, self.rect) #blit stamps the tile canvas onto the window at the position of the tile
 
-# def get_speed(score): ...
+def get_speed(score): #returns the speed of the tiles based on the score
+        return min(200 + 5 * score, 600) #means start at 200 and increase by 5 for every score but max out at 600
 # def get_lowest_tile(tile_group): ...   returns the lowest tile that is still alive
 
 
