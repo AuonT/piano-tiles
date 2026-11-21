@@ -13,7 +13,7 @@
 #   Fewer changed lines in main.py = fewer merge conflicts.
 # - Don't rename the shared variables below without telling the group.
 #gurm
-
+import json
 import random
 import pygame
 
@@ -54,6 +54,10 @@ clock = pygame.time.Clock()
 # SOUNDS & NOTES (Harmanpal)
 # =============================================================================
 # Load notes.json, buzzer sound and background music here (Part 4)
+with open('notes.json') as file: #This calls upon/opens the json file containing the lists
+    notes_dict = json.load(file) #This creates a dictionary which stores the lists which contain song keys
+notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
+note_counts = 0
 
 
 # =============================================================================
