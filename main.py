@@ -68,7 +68,7 @@ high_score = 0
 speed = 0
 
 home_page = True
-game_page = True
+game_page = False
 game_over = False
 sound_on = True
 
