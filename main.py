@@ -132,7 +132,65 @@ def get_lowest_tile(tile_group): #returns the lowest tile that is still alive
 
 
 # --- Member 3: arrow keys and score ---
-# def handle_arrow_key(key): ...   right column = +1 score, wrong column = game over
+# =====================  BLUEPRINT FOR MEMBER 3  =====================
+# Fill in each STEP below in order. The hints tell you WHAT to use,
+# you write the actual code. Run `python main.py` after every step.
+#
+# How to test: temporarily set game_page = True (SHARED GAME VARIABLES),
+# run the game and press the arrow keys. Set it back to False before pushing.
+#
+# Things you can use (already written by others):
+#   KEY_TO_COLUMN          dictionary: arrow key -> column number 0-3 (SETTINGS, top of file)
+#   get_lowest_tile(...)   Member 2's function: gives the tile to hit next, or None
+#   tile.alive             True = not hit yet, False = hit (turns grey)
+#   tile.rect.x            the tile's x position in pixels
+#   TILE_WIDTH             width of one column in pixels (72)
+#   score, high_score, game_over   shared variables
+# =====================================================================
+
+# STEP A: make a font for the score text (only once, so it goes here, NOT in the loop).
+#   Hint: pygame.font.SysFont(None, 32) makes a basic font at size 32.
+#   Save it in a variable, for example called score_font.
+
+
+def handle_arrow_key(key):
+    # This runs every time the player presses an arrow key.
+    # `key` tells you WHICH arrow was pressed (pygame.K_LEFT, K_DOWN, K_UP or K_RIGHT).
+
+    # STEP 1: You're going to CHANGE score, high_score and game_over in here.
+    #   Hint: Python needs one line starting with the word `global` followed by those 3 names.
+
+    # STEP 2: Turn the key into a column number (0, 1, 2 or 3).
+    #   Hint: look `key` up in the KEY_TO_COLUMN dictionary, like dictionary[key].
+    #   Save it in a variable, for example pressed_column.
+
+    # STEP 3: Get the tile the player is supposed to hit right now.
+    #   Hint: Member 2's get_lowest_tile function. It needs tile_group passed in.
+    #   Save it in a variable, for example target.
+
+    # STEP 4: If there's no tile to hit (target is None), stop here.
+    #   Hint: an `if` with `return` inside it ends the function early.
+
+    # STEP 5: Work out which column the target tile is in.
+    #   Hint: divide the tile's x position by TILE_WIDTH using // (whole-number division).
+    #   Save it in a variable, for example target_column.
+
+    # STEP 6: Compare pressed_column and target_column with if / else.
+    #   If they MATCH (right key):
+    #     - mark the target tile as hit   (Hint: its alive attribute)
+    #     - add 1 to score                (Hint: += )
+    #     - if score is now bigger than high_score, make high_score equal score
+    #     - add this comment for Member 4:  # Member 4: play note and +1 here
+    #   If they DON'T match (wrong key):
+    #     - end the game                  (Hint: game_over)
+    #     - add this comment for Member 4:  # Member 4: buzzer here
+
+    pass   # delete this line once you've written your steps above
+
+# When it works:
+#   - right arrow on the right column -> tile turns grey, score goes up
+#   - wrong arrow -> game ends
+#   - pressing keys on the home page or after game over does nothing (see STEP 7 in the loop)
 
 
 # --- Member 4: sound and effects ---
@@ -163,7 +221,13 @@ while running:
             # Member 1: SPACE starts the game from the home page
             # Member 1: R replays after game over
             # Member 4: M toggles sound
-            # Member 3: arrow keys -> if event.key in KEY_TO_COLUMN: handle_arrow_key(event.key)
+            # Member 3, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
+            #   - the key is an arrow key        (Hint: event.key in KEY_TO_COLUMN)
+            #   - the game page is showing       (Hint: game_page)
+            #   - the game is NOT over           (Hint: not game_over)
+            #   - later: the 3-2-1 countdown is finished (ask Member 4 what to check)
+            # Hint: ONE `if` line with `and` between the conditions, then call the
+            # function on the next line and give it event.key
 
     # ---------- DRAW BACKGROUND ----------
     win.fill(BLACK)   # Member 1: replace with the background image
@@ -187,7 +251,12 @@ while running:
         if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
             add_new_tile()
         # Member 4: update "+1" text pop-ups
-        # Member 3: draw score and high score at the top
+        # Member 3, STEP 8: draw the score and high score at the top.
+        #   1. Turn text into a picture:  your_font.render(text, True, WHITE)
+        #      The text should say e.g. "Score: 5". Hint: an f-string like f"Score: {score}"
+        #   2. Stamp the picture on the window:  win.blit(picture, (x, y))
+        #      Try (10, 10) for the score and (180, 10) for the high score.
+        #   Do both for score AND high_score (4 lines total).
 
         # column lines
         for i in range(4):
