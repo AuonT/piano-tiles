@@ -85,22 +85,24 @@ class Tile(pygame.sprite.Sprite): #creates an object called tile that is a sprit
         self.color = BLACK #sets the color of the tile to black
         self.alive = True #sets the tile to be alive aka not hit yet
 
-        self.surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT)) #makes a blank rectangle that is the size of the tile
+        self.surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT), pygame.SRCALPHA) #makes a blank rectangle that is the size of the tile
         self.rect = self.surface.get_rect() #rect stores the position of the tile, later moving the tile will self.recy.y
         self.rect.x = x #sets the x position of the tile to the x that was passed in
         self.rect.y = y #sets the y position of the tile to the y that was passed in
 
-    def update(self): #defines the speed of the tile and moves it down the screen
+    def update(self, speed): #defines the speed of the tile and moves it down the screen
         self.rect.y += speed #it moves the tiles down by speed pixels every frame
         if self.rect.top >= HEIGHT: #checks to see if the tile has moved off the bottom of the screen.
             self.kill() #if its off the screen it kills itself.
 
-            self.surface.fill(0, 0, 0, 0) #clears the tile canvas before redrawing it
-            if self.alive:
-                pygame.draw.rect(self.surface, self.color, (0, 0, TILE_WIDTH, TILE_HEIGHT), boarder_radius=10) #draws the tile on the canvas with rounding the corners
-                pygame.draw.rect(self.surface, BLUE, (0, 0, TILE_WIDTH, TILE_HEIGHT), 3, boarder_radius=8) #draws the blue outline of the tile on the canvas with rounding the corners
-            else:
-                pygame.draw.rect(self.surface, GRAY, (0, 0, TILE_WIDTH, TILE_HEIGHT), border_radius=8) #a hit tile becomes gray and the blue outline is removed
+        self.surface.fill((0, 0, 0, 0)) #clears the tile canvas before redrawing it
+        if self.alive:
+            pygame.draw.rect(self.surface, self.color, (0, 0, TILE_WIDTH, TILE_HEIGHT), border_radius=10) #draws the tile on the canvas with rounding the corners
+            pygame.draw.rect(self.surface, BLUE, (0, 0, TILE_WIDTH, TILE_HEIGHT), 3, border_radius=8) #draws the blue outline of the tile on the canvas with rounding the corners
+        else:
+            pygame.draw.rect(self.surface, GRAY, (0, 0, TILE_WIDTH, TILE_HEIGHT), border_radius=8) #a hit tile becomes gray and the blue outline is removed
+
+        self.win.blit(self.surface, self.rect) #blit stamps the tile canvas onto the window at the position of the tile
 
 # def get_speed(score): ...
 # def get_lowest_tile(tile_group): ...   returns the lowest tile that is still alive
