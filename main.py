@@ -181,16 +181,16 @@ def handle_arrow_key(key):
     target_tile = get_lowest_tile(tile_group)
     if target_tile is None:
         return
-    target_column = tile.rect.x//TILE_WIDTH
+    target_column = target_tile.rect.x//TILE_WIDTH
     if pressed_column == target_column:
         target_tile.alive = False
         score += 1
         if score > high_score:
             high_score = score
             # Harmanpal: play note and +1 here
-        else:
-            game_over = True
-            # Harmanpal: buzzer here
+    else:
+        game_over = True
+        # Harmanpal: buzzer here
     # This runs every time the player presses an arrow key.
     # `key` tells you WHICH arrow was pressed (pygame.K_LEFT, K_DOWN, K_UP or K_RIGHT).
 
