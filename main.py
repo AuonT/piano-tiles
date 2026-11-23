@@ -49,6 +49,16 @@ clock = pygame.time.Clock()
 # IMAGES & FONTS (Darius)
 # =============================================================================
 # Load Assets/ images and Fonts/ here (Part 1 and Part 5)
+background = pygame.image.load("Assets/bg.png")
+background2 = pygame.image.load("Assets/bg2.png")
+red_overlay = pygame.image.load("Assets/red overlay.png")
+title = pygame.image.load("Assets/title.png")
+
+pygame.font.init()
+
+title_font = pygame.font.Font("Alternity-8w7J.tff", 60)
+text_font = pygame.font.Font("Futura condensed.ttf", 30)
+text_font2 = pygame.font.Font("Marker Felt.ttf", 30)
 
 piano_img = pygame.image.load('Assets/piano.png')
 piano_img = pygame.transform.scale(piano_img, (212, 212))
@@ -242,9 +252,45 @@ with open('notes.json') as file: #This calls upon/opens the json file containing
 
 
 # --- Darius Malich (DM): screens ---
-# def draw_home_page(): ...
-# def draw_game_over(): ...
-# def reset_game(): ...   used when R is pressed
+def draw_home_page():
+    win.blit(bg, (0, 0))
+
+    # Draw piano image
+    win.blit(piano_img, (piano_x, piano_y))
+
+    # Draw title
+    title = title_font.render("Piano Tiles", True, BLACK)
+    win.blit(title, (title_x, title_y))
+
+    # Draw instructions
+    start_text = text_font.render("Press SPACE to start", True, BLACK)
+    win.blit(start_text, (text_x, text_y))
+
+
+def draw_game_over(): 
+    win.blit(background, (0, 0))
+
+    game_over_text = title_font.render("Game Over", True, BLACK)
+    win.blit(game_over_text, (x, y))
+
+    replay = title_font.render("Replay?", True, BLACK)
+    win.blit(replay, (x, y))
+
+
+def reset_game():
+    
+    global score, speed, game_over, home_page, game_page
+
+    score = 0
+    speed = 0
+    game_over = False
+
+    tile_group.empty()
+
+    home_page = False
+    game_page = True
+
+
 
 
 # =============================================================================
@@ -263,7 +309,14 @@ while running:
                 running = False
 
             # Darius: SPACE starts the game from the home page
+            if event.type == pygame.K_SPACE:
+                running == True
+                draw_home_page()
+
             # Darius: R replays after game over
+            if event.type == pygame.K_r:
+                reset_game()
+
             # Harmanpal: M toggles sound
             # Gurmanpal, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
             #   - the key is an arrow key        (Hint: event.key in KEY_TO_COLUMN)
@@ -279,12 +332,12 @@ while running:
 
 
     # ---------- DRAW BACKGROUND ----------
-    win.fill(BLACK)   # Darius: replace with the background image
+    win.blit(background, (0, 0))   # Darius: replace with the background image
     # Harmanpal: update the falling background squares here
 
     # ---------- HOME PAGE (Darius) ----------
     if home_page:
-        pass  # draw_home_page()
+        draw_home_page()
 
     # ---------- GAME PAGE ----------
     if game_page:
@@ -344,7 +397,8 @@ while running:
                 pass
             if sound_btn.draw(win):
                 pass
-            # Darius: draw_game_over()
+            # Darius: 
+            draw_game_over()
 
     # ---------- UPDATE SCREEN ----------
     pygame.draw.rect(win, BLUE, (0, 0, WIDTH, HEIGHT), 2)
