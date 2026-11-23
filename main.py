@@ -50,6 +50,12 @@ clock = pygame.time.Clock()
 # =============================================================================
 # Load Assets/ images and Fonts/ here (Part 1 and Part 5)
 
+piano_img = pygame.image.load('Assets/piano.png')
+piano_img = pygame.transform.scale(piano_img, (212, 212))
+
+start_img = pygame.image.load('Assets/start.png')
+start_img = pygame.transform.scale(start_img, (120, 40))
+start_rect = start_img.get_rect(center=(WIDTH//2, HEIGHT-80))
 
 # =============================================================================
 # SOUNDS & NOTES (Harmanpal)
@@ -60,7 +66,14 @@ pygame.mixer.music.load("Sounds/background_music.mp3")
 pygame.mixer.music.set_volume(0.5)  #This sets the volume of the background music to a value from 0-1
 pygame.mixer.music.play(-1)  #This causes the bg music to loop infinetly until the game is closed
 
+close_img = pygame.image.load('Assets/closeBtn.png')
+replay_img = pygame.image.load('Assets/replay.png')
+sound_on_img = pygame.image.load('Assets/soundOnBtn.png')
+sound_off_img = pygame.image.load('Assets/soundOffBtn.png')
 
+close_btn = Button(close_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
+replay_btn = Button(replay_img, (36, 36), WIDTH//2-18, HEIGHT//2+115)
+sound_btn = Button(sound_on_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
 # =============================================================================
 # GROUPS (Auon + Harmanpal)
 # =============================================================================
@@ -224,9 +237,7 @@ def play_note(notePath):
 with open('notes.json') as file: #This calls upon/opens the json file containing the lists
     notes_dict = json.load(file) #This creates a dictionary which stores the lists which contain song keys
 
-notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
-notes_counts = 0
-pygame.mixer.set_num_channels(len(notes_lists)) #This sets the number of channels to the length of the list so that all notes can be played at once
+
 
 
 
@@ -278,6 +289,23 @@ while running:
     # ---------- GAME PAGE ----------
     if game_page:
         # Harmanpal: 3-2-1 countdown
+        win.blit(piano_img, (WIDTH//8, HEIGHT//8))
+        win.blit(start_img, start_rect)
+        if pos and start_rect.collidepoint(pos):
+            home_page = False
+            game_page = True
+
+            x = random.randint(0,3)
+            t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)
+            tile_group.add(t)
+            
+            notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
+            notes_counts = 0
+            pygame.mixer.set_num_channels(len(notes_lists)) #This sets the number of channels to the length of the list so that all notes can be played at once
+
+
+
+
         # Auon: move tiles, spawn new tiles, check if a tile reached the bottom
         if len(tile_group) == 0:
             add_new_tile() #when the game starts and there are no tiles yet this makes the new one.
@@ -310,6 +338,12 @@ while running:
         if game_over:
             speed = 0
             # Harmanpal: flashing red overlay
+            if close_btn.draw(win):
+                running = False
+            if replay_btn.draw(win):
+                pass
+            if sound_btn.draw(win):
+                pass
             # Darius: draw_game_over()
 
     # ---------- UPDATE SCREEN ----------
