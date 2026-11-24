@@ -56,7 +56,7 @@ title = pygame.image.load("Assets/title.png")
 
 pygame.font.init()
 
-title_font = pygame.font.Font("Alternity-8w7J.tff", 60)
+title_font = pygame.font.Font("Alternity-8w7j.ttf", 60)
 text_font = pygame.font.Font("Futura condensed.ttf", 30)
 text_font2 = pygame.font.Font("Marker Felt.ttf", 30)
 
@@ -253,7 +253,7 @@ with open('notes.json') as file: #This calls upon/opens the json file containing
 
 # --- Darius Malich (DM): screens ---
 def draw_home_page():
-    win.blit(bg, (0, 0))
+    win.blit(background, (0, 0))
 
     # Draw piano image
     win.blit(piano_img, (piano_x, piano_y))
@@ -309,12 +309,13 @@ while running:
                 running = False
 
             # Darius: SPACE starts the game from the home page
-            if event.type == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE:
                 running == True
-                draw_home_page()
+                home_page = False
+                game_page = True
 
             # Darius: R replays after game over
-            if event.type == pygame.K_r:
+            if event.key == pygame.K_r:
                 reset_game()
 
             # Harmanpal: M toggles sound
