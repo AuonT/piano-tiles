@@ -50,15 +50,17 @@ clock = pygame.time.Clock()
 # =============================================================================
 # Load Assets/ images and Fonts/ here (Part 1 and Part 5)
 background = pygame.image.load("Assets/bg.png")
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 background2 = pygame.image.load("Assets/bg2.png")
 red_overlay = pygame.image.load("Assets/red overlay.png")
 title = pygame.image.load("Assets/title.png")
 
+
 pygame.font.init()
 
-title_font = pygame.font.Font("Alternity-8w7j.ttf", 60)
-text_font = pygame.font.Font("Futura condensed.ttf", 30)
-text_font2 = pygame.font.Font("Marker Felt.ttf", 30)
+title_font = pygame.font.Font("Fonts/Alternity-8w7J.ttf", 60)
+text_font = pygame.font.Font("Fonts/Futura condensed.ttf", 30)
+text_font2 = pygame.font.Font("Fonts/Marker Felt.ttf", 30)
 
 piano_img = pygame.image.load('Assets/piano.png')
 piano_img = pygame.transform.scale(piano_img, (212, 212))
@@ -71,8 +73,8 @@ start_rect = start_img.get_rect(center=(WIDTH//2, HEIGHT-80))
 # SOUNDS & NOTES (Harmanpal)
 # =============================================================================
 # Load notes.json, buzzer sound and background music here (Part 4)
-buzzer_sound = pygame.mixer.Sound("Sounds/buzzer.mp3") 
-pygame.mixer.music.load("Sounds/background_music.mp3")
+buzzer_sound = pygame.mixer.Sound("Sounds/piano-buzzer.mp3") 
+pygame.mixer.music.load("Sounds/piano-bgmusic.mp3")
 pygame.mixer.music.set_volume(0.5)  #This sets the volume of the background music to a value from 0-1
 pygame.mixer.music.play(-1)  #This causes the bg music to loop infinetly until the game is closed
 
@@ -81,9 +83,9 @@ replay_img = pygame.image.load('Assets/replay.png')
 sound_on_img = pygame.image.load('Assets/soundOnBtn.png')
 sound_off_img = pygame.image.load('Assets/soundOffBtn.png')
 
-close_btn = Button(close_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
-replay_btn = Button(replay_img, (36, 36), WIDTH//2-18, HEIGHT//2+115)
-sound_btn = Button(sound_on_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
+#close_btn = Button(close_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
+#replay_btn = Button(replay_img, (36, 36), WIDTH//2-18, HEIGHT//2+115)
+#sound_btn = Button(sound_on_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
 # =============================================================================
 # GROUPS (Auon + Harmanpal)
 # =============================================================================
