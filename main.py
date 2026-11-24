@@ -243,6 +243,55 @@ def handle_arrow_key(key):
 
 
 # --- Harmanpal Banwait (HB): sound and effects ---
+# ===================== TO-DO LIST FOR HARMANPAL BANWAIT (HB) =====================
+# PART 1 - remove the tutorial's MOUSE code (our game uses keys, so it crashes):
+#
+# FIX 1 (GAME PAGE in the loop, marked "HARMANPAL: DELETE"): delete the piano picture,
+#   the PLAY button, and the whole `if pos and start_rect.collidepoint(pos):` block.
+#   It's the tutorial's mouse Start button and it draws ON TOP of the game.
+#   Darius's SPACE key starts the game now.
+#   Keep the 3 notes lines from inside it (notes_lists, notes_counts,
+#   set_num_channels): move them up here, right under notes_dict, so they run once.
+#
+# FIX 2 (game over part of the loop, marked "HARMANPAL: DELETE"): delete the
+#   `if close_btn.draw(win):` / `replay_btn` / `sound_btn` lines. Those buttons were
+#   removed (Button doesn't exist here), so they crash the game over screen.
+#   R = replay (Darius), M = sound (you), Q = quit already do those jobs.
+#
+# PART 2 - your features (watch Part 4 and Part 6). Run the game after each step.
+#
+# STEP 1 - play a note on every correct hit:
+#   Change play_note() so it takes NO input and plays the NEXT note of the song:
+#     - global notes_counts                    (you change it, so you need this)
+#     - note = notes_lists[notes_counts].strip()
+#     - play the file f"Sounds/{note}.ogg"     Hint: pygame.mixer.Sound(...).play()
+#     - add 1 to notes_counts, back to 0 at the end. Hint: % len(notes_lists)
+#     - only play if sound_on is True
+#   Then call play_note() in Gurmanpal's function where it says
+#   "# Harmanpal: play note and +1 here" (ask Gurmanpal to move that comment so it
+#   sits right after `score += 1`, otherwise it only plays on a new high score).
+#
+# STEP 2 - buzzer: buzzer_sound.play() where it says "# Harmanpal: buzzer here",
+#   AND one line inside Auon's red-tile check in the loop (tile reached the bottom).
+#
+# STEP 3 - M key (EVENTS, where it says "# Harmanpal: M toggles sound"):
+#   flip sound_on (Hint: sound_on = not sound_on), then
+#   pygame.mixer.music.pause() when it's off / pygame.mixer.music.unpause() when on.
+#
+# STEP 4 - "+1" pop-ups (Part 6): write a Text class here, uncomment text_group in
+#   GROUPS, add a Text when a tile is hit, and update text_group in GAME PAGE where
+#   it says '# Harmanpal: update "+1" text pop-ups'.
+#
+# STEP 5 - 3-2-1 countdown (Part 6): write a Counter class here. In GAME PAGE only move
+#   tiles once it's finished, then tell Auon, Gurmanpal and Darius the check to use
+#   (e.g. time_counter.count <= 0) so arrow keys and replay respect it.
+#
+# STEP 6 - red flash on game over: Darius already loaded red_overlay. Scale it to
+#   (WIDTH, HEIGHT) and blit it every few frames where it says
+#   "# Harmanpal: flashing red overlay".
+#
+# STEP 7 (optional) - falling background squares (Part 6 Square class).
+# ============================================================================
 def play_note(notePath):
     pygame.mixer.Sound(notePath).play()
 
@@ -254,6 +303,35 @@ with open('notes.json') as file: #This calls upon/opens the json file containing
 
 
 # --- Darius Malich (DM): screens ---
+# ===================== TO-DO LIST FOR DARIUS MALICH (DM) =====================
+# Already done: assets pushed, fonts fixed, background scaled, SPACE/R use event.key.
+# Do these in order and run `python main.py` after each one.
+#
+# FIX 1 (draw_home_page, below): piano_x, piano_y, title_x, title_y, text_x, text_y
+#   were never given numbers, so the game crashes as soon as it opens.
+#   Make them real numbers (you can set them right above `def draw_home_page`).
+#   The window is 288 wide and 512 tall. Good starting spots:
+#     piano  -> (WIDTH // 8, HEIGHT // 8)     same spot as the tutorial
+#     title  -> centred, around y = 300
+#     text   -> centred, around y = 430
+#   Hint to centre something:  x = WIDTH // 2 - picture.get_width() // 2
+#   Size 60 is too big for the title (it runs off the screen). Try 30-35.
+#
+# FIX 2 (draw_game_over, below): x and y don't exist, and both texts use the same
+#   spot so they'd overlap. Give each line its own centred position
+#   (e.g. y = 180 and y = 260). Also show the score with an f-string: f"Score: {score}"
+#   Change "Replay?" to "R to replay   Q to quit" - we use keys, not buttons.
+#
+# FIX 3 (EVENTS in the game loop):
+#   - SPACE should only start the game from the home page. Hint: add `and home_page`
+#   - R should only restart when the game is over.        Hint: add `and game_over`
+#   - delete the line `running == True` (it does nothing)
+#
+# FIX 4 (reset_game, below): keep high_score (don't reset it). When Harmanpal adds
+#   the 3-2-1 countdown, ask him what needs resetting here too.
+#
+# TEST: home page -> SPACE -> play -> miss a tile -> game over screen -> R -> plays again
+# ============================================================================
 def draw_home_page():
     win.blit(background, (0, 0))
 
@@ -345,6 +423,7 @@ while running:
     # ---------- GAME PAGE ----------
     if game_page:
         # Harmanpal: 3-2-1 countdown
+        # HARMANPAL: DELETE from here to the end of the `if pos ...` block (FIX 1 in your to-do list)
         win.blit(piano_img, (WIDTH//8, HEIGHT//8))
         win.blit(start_img, start_rect)
         if pos and start_rect.collidepoint(pos):
@@ -394,6 +473,7 @@ while running:
         if game_over:
             speed = 0
             # Harmanpal: flashing red overlay
+            # HARMANPAL: DELETE these 6 button lines (FIX 2 in your to-do list)
             if close_btn.draw(win):
                 running = False
             if replay_btn.draw(win):
