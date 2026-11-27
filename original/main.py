@@ -26,8 +26,8 @@ from objects import Tile, Square, Text, Button, Counter
 
 pygame.init()
 SCREEN = WIDTH, HEIGHT = 288, 512
-TILE_WIDTH = WIDTH // 4
-TILE_HEIGHT = 130
+TILE_WIDTH = WIDTH // 4  #AT: same as in objects.py, 4 columns so each tile is a quarter of the screen
+TILE_HEIGHT = 130  #AT: height of each tile in pixels
 
 info = pygame.display.Info()
 width = info.current_w
@@ -94,7 +94,7 @@ sound_btn = Button(sound_on_img, (24, 24), WIDTH - WIDTH // 4 - 18, HEIGHT//2 + 
 
 # GROUPS & OBJECTS ***********************************************************
 
-tile_group = pygame.sprite.Group()
+tile_group = pygame.sprite.Group()  #AT: holds all the tiles on the screen so they can be updated together and deleted with kill()
 square_group = pygame.sprite.Group()
 text_group = pygame.sprite.Group()
 
@@ -102,8 +102,8 @@ time_counter = Counter(win, gameover_font)
 
 # FUNCTIONS ******************************************************************
 
-def get_speed(score):
-	return 200 + 5 * score
+def get_speed(score):  #AT: works out how fast the tiles fall based on the score
+	return 200 + 5 * score  #AT: starts at 200 and goes up by 5 every point so the game gets harder the longer you last
 
 def play_notes(notePath):
 	pygame.mixer.Sound(notePath).play()
@@ -164,9 +164,9 @@ while running:
 			home_page = False
 			game_page = True
 
-			x = random.randint(0, 3)
-			t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)
-			tile_group.add(t)
+			x = random.randint(0, 3)  #AT: picks a random column from 0 to 3 for the first tile
+			t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)  #AT: makes the first tile in that column just above the screen so it slides in instead of popping in
+			tile_group.add(t)  #AT: adds it to the group so it gets moved and drawn every frame
 
 			pos = None
 
@@ -177,8 +177,8 @@ while running:
 	if game_page:
 		time_counter.update()
 		if time_counter.count <= 0:
-			for tile in tile_group:
-				tile.update(speed)
+			for tile in tile_group:  #AT: goes through every tile on the screen
+				tile.update(speed)  #AT: moves each tile down and draws it (the update method in objects.py)
 
 				if pos:
 					if tile.rect.collidepoint(pos):
@@ -201,9 +201,9 @@ while running:
 
 						pos = None
 
-				if tile.rect.bottom >= HEIGHT and tile.alive:
-					if not game_over:
-						tile.color = (255, 0, 0)
+				if tile.rect.bottom >= HEIGHT and tile.alive:  #AT: if a tile that wasnt hit reaches the bottom of the screen then the player missed it
+					if not game_over:  #AT: only does this once, otherwise it would keep happening every frame after the game ends
+						tile.color = (255, 0, 0)  #AT: turns the missed tile red so the player can see which one they missed
 						buzzer_fx.play()
 						game_over = True
 
@@ -211,13 +211,13 @@ while running:
 				buzzer_fx.play()
 				game_over = True
 
-			if len(tile_group) > 0:
-				t = tile_group.sprites()[-1]
-				if t.rect.top + speed >= 0:
-					x = random.randint(0, 3)
-					y = -TILE_HEIGHT - (0 - t.rect.top)
-					t = Tile(x * TILE_WIDTH, y, win)
-					tile_group.add(t)
+			if len(tile_group) > 0:  #AT: only checks if there are tiles to look at, otherwise sprites()[-1] would crash
+				t = tile_group.sprites()[-1]  #AT: gets the newest tile, its the last one added so its the one at the top
+				if t.rect.top + speed >= 0:  #AT: if the newest tile is about to fully come onto the screen its time to make the next one
+					x = random.randint(0, 3)  #AT: picks a random column for the next tile
+					y = -TILE_HEIGHT - (0 - t.rect.top)  #AT: puts the new tile right on top of the last one so theres no gap between them
+					t = Tile(x * TILE_WIDTH, y, win)  #AT: makes the new tile there
+					tile_group.add(t)  #AT: adds it to the group with the rest
 
 			text_group.update(speed)
 			img1 = score_font.render(f'Score : {score}', True, WHITE)
@@ -227,10 +227,10 @@ while running:
 			for i in range(4):
 				pygame.draw.line(win, WHITE, (TILE_WIDTH * i, 0), (TILE_WIDTH*i, HEIGHT), 1)
 
-			speed = int(get_speed(score) * (FPS / 1000))
+			speed = int(get_speed(score) * (FPS / 1000))  #AT: turns the speed into pixels per frame, at 30 fps it starts at 6 pixels every frame
 
 			if game_over:
-				speed = 0
+				speed = 0  #AT: stops the tiles from moving once the game is over
 
 				if overlay_index > 20:
 					win.blit(overlay, (0,0))
