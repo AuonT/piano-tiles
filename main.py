@@ -75,11 +75,49 @@ buzzer_sound = pygame.mixer.Sound("Sounds/piano-buzzer.mp3")
 pygame.mixer.music.load("Sounds/piano_bgmusic.mp3")
 pygame.mixer.music.set_volume(0.5)  #This sets the volume of the background music to a value from 0-1
 pygame.mixer.music.play(-1)  #This causes the bg music to loop infinetly until the game is closed
-
+overlay_counter = 0
 close_img = pygame.image.load('Assets/closeBtn.png')
 replay_img = pygame.image.load('Assets/replay.png')
 sound_on_img = pygame.image.load('Assets/soundOnBtn.png')
 sound_off_img = pygame.image.load('Assets/soundOffBtn.png')
+
+class Square(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        size = random.randint(10,30)
+        self.surface = pygame.Surface((size, size))
+        self.surface.fill(random.choice([WHITE, GRAY, BLUE]))
+        self.surface.set_alpha(120)
+        self.rect = self.surface.get_rect(center=(random.randint(0, WIDTH), -size))
+        self.fall_speed = random.randint(2, 5)
+        self.angle = 0
+        self.spin = ([-3, -2, 2, 3])
+def update(self):
+    self.rect.y += self.fall_speed
+    self.angle += self.spin
+    if self.rect.top > HEIGHT:
+        self.kill()
+        return
+    rotated_surface = pygame.transform.rotate(self.surface, self.angle)
+    win.blit(rotated, rotated.get_rect(center=self.rect.center))
+
+class Counter:
+    def __init__(self):
+        self.reset()
+    def reset(self):
+        self.count = 3
+        self.last_tick = None
+    def update(self):
+        now = pygame.time.get_ticks()
+        if self.last_tick is None:
+            self.last_tick = now
+        if self.count > 0 and now - self.last_tick >= 1000:
+            self.count -= 1
+            self.last_tick = now
+        if self.count > 0:
+            img = title_font.render(str(self.count), True, WHITE)
+            win.blit(img, img.get_rect(center=(WIDTH//2, HEIGHT//2)))
+time_counter = Counter()
 
 
 # =============================================================================
@@ -105,6 +143,10 @@ sound_on = True
 
 # =============================================================================
 # FUNCTIONS
+def play_buzzer():
+    if not sound_on:
+        return
+    buzzer_sound.play()
 # =============================================================================
 
 # --- Auon Tippu (AT): tiles ---
@@ -249,6 +291,8 @@ def handle_arrow_key(key):
 
 # --- Harmanpal Banwait (HB): sound and effects ---
 def play_note(notePath):
+    if not sound_on:
+        return
     pygame.mixer.Sound(notePath).play()
 
 with open('notes.json') as file: #This calls upon/opens the json file containing the lists
@@ -328,6 +372,12 @@ while running:
                 reset_game()
 
             # Harmanpal: M toggles sound
+            if event.key == pygame.K_m:
+                sound_on = not sound_on
+                if sound_on:
+                    pygame.mixer.music.unpause()
+                else:
+                    pygame.mixer.music.pause()
             # Gurmanpal, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
             #   - the key is an arrow key        (Hint: event.key in KEY_TO_COLUMN)
             #   - the game page is showing       (Hint: game_page)
@@ -344,6 +394,10 @@ while running:
     # ---------- DRAW BACKGROUND ----------
     win.blit(background, (0, 0))   # Darius: replace with the background image
     # Harmanpal: update the falling background squares here
+    if random.random() < 0.05:
+        square_group.add(Square())
+    square_group.update()  
+    
 
     # ---------- HOME PAGE (Darius) ----------
     if home_page:
@@ -352,6 +406,10 @@ while running:
     # ---------- GAME PAGE ----------
     if game_page:
         # Harmanpal: 3-2-1 countdown
+        if game_over:
+            time_counter.reset()
+        else:
+            time_counter.update()
         
 
             
@@ -392,18 +450,12 @@ while running:
 
         if game_over:
             speed = 0
-            if red_overlay > 20:
+            if overlay_counter > 20:
                 win.blit(red_overlay, (0,0))
             else:
                 red_overlay += 1
-                if red_overlay % 3 == 0:
-                    win.blit(red_overlay, (0,0))
-                    if close_btn.draw(win):
-                        running = False
-                    if replay_btn.draw(win):
-                        pass
-                    if sound_btn.draw(win):
-                        pass
+            if red_overlay % 3 == 0:
+                win.blit(red_overlay, (0,0))
             # Harmanpal: flashing red overlay
             
             # Darius: 
