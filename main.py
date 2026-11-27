@@ -402,9 +402,8 @@ while running:
             #   - later: the 3-2-1 countdown is finished (ask Harmanpal what to check)
             # Hint: ONE `if` line with `and` between the conditions, then call the
             # function on the next line and give it event.key
-            if event.key in KEY_TO_COLUMN and game_page and not game_over:
+            if event.key in KEY_TO_COLUMN and game_page and not game_over and time_counter.count == 0:
                 handle_arrow_key(event.key)
-                 #and whatever variable harman designates as countdown_finshed in this statement aswell
     
 
 
