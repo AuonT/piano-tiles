@@ -16,8 +16,10 @@ import pygame
 import random
 
 SCREEN = WIDTH, HEIGHT = 288, 512
-TILE_WIDTH = WIDTH // 4  #AT: the screen gets split into 4 columns so each tile is a quarter of the screen wide
-TILE_HEIGHT = 130  #AT: how tall each tile is in pixels, 130 makes them long enough that you can see them coming
+# AT: Same tile size as main.py. objects.py is a separate file, so the Tile class
+#     needs its own copy of these numbers.
+TILE_WIDTH = WIDTH // 4
+TILE_HEIGHT = 130
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -25,39 +27,65 @@ BLUE = (30, 144, 255)
 BLUE2 = (2, 239, 239)
 PURPLE = (191, 64, 191)
 
-class Tile(pygame.sprite.Sprite):  #AT: creates the tile object, its a sprite so it can go in a group and use kill() to delete itself
-	def __init__(self, x, y, win):  #AT: runs whenever a new tile is made, x and y are where it starts and win is the window it gets drawn on
-		super(Tile, self).__init__()  #AT: runs the pygame sprite setup first so the tile actually works in a group
+# AT: Tile is one black piano tile. It's built on pygame's Sprite so it can be put
+#     in a Group (tile_group in main.py) and remove itself with kill().
+class Tile(pygame.sprite.Sprite):
+	# AT: Runs once when a tile is created. x and y are where it starts
+	#     (x picks the column), and win is the game window it draws on.
+	def __init__(self, x, y, win):
+		# AT: Run Sprite's own setup first, otherwise the tile can't join a sprite Group.
+		super(Tile, self).__init__()
 
-		self.win = win  #AT: saves the window so the tile can draw itself later in update
-		self.x, self.y = x, y  #AT: saves the starting spot but its never used again since rect already has the position
-		self.color = BLACK  #AT: every tile starts black, its saved in a variable so it can turn red if you miss it
-		self.alive = True  #AT: alive means the tile hasnt been hit yet, when you click it this becomes False
+		self.win = win
+		# AT: Saves the starting position. It's never used again: rect below is what
+		#     actually tracks where the tile is.
+		self.x, self.y = x, y
+		self.color = BLACK
+		# AT: alive = True means 'not hit yet'. It becomes False when the player hits the
+		#     tile, which makes it fade and stops it counting as a miss at the bottom.
+		self.alive = True
 
-		self.surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT), pygame.SRCALPHA)  #AT: makes a blank canvas the size of a tile, SRCALPHA lets it be see through so hit tiles can fade out
-		self.rect = self.surface.get_rect()  #AT: rect stores the position and size of the tile, moving the tile is just changing rect.y
-		self.rect.x = x  #AT: puts the tile in the column it was given
-		self.rect.y = y  #AT: puts the tile at the height it was given (usually above the screen so it slides in)
+		# AT: A blank, tile-sized canvas to draw the tile on. SRCALPHA allows
+		#     see-through colours, needed for the faded look of a hit tile.
+		self.surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT), pygame.SRCALPHA)
+		# AT: rect stores the tile's position and size. Moving the tile just means
+		#     changing rect.y; main.py also uses rect for clicks and the bottom check.
+		self.rect = self.surface.get_rect()
+		self.rect.x = x
+		self.rect.y = y
 
-		self.center = TILE_WIDTH//2, TILE_HEIGHT//2 + 15  #AT: finds the middle of the tile (a bit lower down) for where the circle goes
-		self.line_start = self.center[0], self.center[1]-18  #AT: the line starts just above the circle
-		self.line_end = self.center[0], 20  #AT: and goes up to 20 pixels from the top of the tile, its just decoration
+		# AT: Points for the blue circle and line drawn in the middle of the tile.
+		#     Only decoration, they don't affect the gameplay.
+		self.center = TILE_WIDTH//2, TILE_HEIGHT//2 + 15
+		self.line_start = self.center[0], self.center[1]-18
+		self.line_end = self.center[0], 20
 
-	def update(self, speed):  #AT: this runs every frame, it moves the tile down by speed and then draws it
-		self.rect.y += speed  #AT: moves the tile down the screen by speed pixels every frame
-		if self.rect.y >= HEIGHT:  #AT: checks if the tile has gone past the bottom of the screen
-			self.kill()  #AT: if its off the screen it deletes itself so old tiles dont pile up and slow the game down
+	# AT: Called every frame from main.py with the current speed.
+	def update(self, speed):
+		# AT: Move the tile down. In pygame a bigger y is lower on the screen.
+		self.rect.y += speed
+		# AT: Once the tile has gone off the bottom, delete it so thousands of
+		#     invisible tiles don't pile up below the screen and slow the game down.
+		if self.rect.y >= HEIGHT:
+			self.kill()
 
-		if self.alive:  #AT: if the tile hasnt been hit yet draw the normal tile
-			pygame.draw.rect(self.surface, self.color, (0,0, TILE_WIDTH, TILE_HEIGHT))  #AT: fills the tile with its colour (black normally, red if you missed it)
-			pygame.draw.rect(self.surface, PURPLE, (0,0, TILE_WIDTH, TILE_HEIGHT), 4)  #AT: purple border 4 pixels thick around the edge
-			pygame.draw.rect(self.surface, BLUE2, (0,0, TILE_WIDTH, TILE_HEIGHT), 2)  #AT: thinner light blue border on top of the purple one so it kinda glows
-			pygame.draw.line(self.surface, BLUE, self.line_start, self.line_end, 3)  #AT: draws the blue line going up from the circle
-			pygame.draw.circle(self.surface, BLUE, self.center, 15, 3)  #AT: draws the blue circle, 15 is the radius and 3 is how thick the outline is
-		else:  #AT: otherwise the tile was already hit
-			pygame.draw.rect(self.surface, (0,0,0, 90), (0,0, TILE_WIDTH, TILE_HEIGHT))  #AT: draws a see through black box so you can tell its been hit, the 90 is how see through it is
+		# AT: Not hit yet: draw it black with a purple and a cyan border, plus the blue
+		#     line and circle in the middle.
+		if self.alive:
+			pygame.draw.rect(self.surface, self.color, (0,0, TILE_WIDTH, TILE_HEIGHT))
+			pygame.draw.rect(self.surface, PURPLE, (0,0, TILE_WIDTH, TILE_HEIGHT), 4)
+			pygame.draw.rect(self.surface, BLUE2, (0,0, TILE_WIDTH, TILE_HEIGHT), 2)
+			pygame.draw.line(self.surface, BLUE, self.line_start, self.line_end, 3)
+			pygame.draw.circle(self.surface, BLUE, self.center, 15, 3)
+		# AT: Already hit: cover it with see-through black (alpha 90) so it looks faded.
+		#     Note: the canvas isn't cleared first, so this layer stacks up every frame and the
+		#     tile gets darker. In our version we clear it with surface.fill((0, 0, 0, 0)) first.
+		else:
+			pygame.draw.rect(self.surface, (0,0,0, 90), (0,0, TILE_WIDTH, TILE_HEIGHT))
 			
-		self.win.blit(self.surface, self.rect)  #AT: stamps the tile canvas onto the game window at the tiles position, without this you wouldnt see it
+		# AT: Stamp the tile's canvas onto the game window at the tile's position.
+		#     Nothing is visible until this line runs.
+		self.win.blit(self.surface, self.rect)
 
 class Text(pygame.sprite.Sprite):
 	def __init__(self, text, font, pos, win):
