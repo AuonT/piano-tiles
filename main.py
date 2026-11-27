@@ -119,13 +119,29 @@ class Counter:
             win.blit(img, img.get_rect(center=(WIDTH//2, HEIGHT//2)))
 time_counter = Counter()
 
+class Text(pygame.sprite.Sprite):
+    def __init__(self, x, y, text, colour):
+        super(). __init__()
+        self.image = text_font.render(text, True, colour)
+        self.rect = self.image.get_rect(center=center)
+        self.alpha = 255
+    def update(self):
+        self.rect.y -= 4
+        self.alpha -= 12
+        if self.alpha <= 0:
+            self.kill()
+            return
+        self.image.set_alpha(self.alpha)
+        win.blit(self.image, self.rect)
+
+
 
 # =============================================================================
 # GROUPS (Auon + Harmanpal)
 # =============================================================================
 tile_group = pygame.sprite.Group()     # Auon
-# text_group = pygame.sprite.Group()     # Harmanpal ("+1" pop-ups)
-# square_group = pygame.sprite.Group()   # Harmanpal (background squares)
+text_group = pygame.sprite.Group()     # Harmanpal ("+1" pop-ups)
+square_group = pygame.sprite.Group()   # Harmanpal (background squares)
 
 
 # =============================================================================
@@ -235,6 +251,7 @@ def handle_arrow_key(key):
     if pressed_column == target_column:
         target_tile.alive = False
         score += 1
+        text_group.add(Text("+1", target_tile.rect.center))
         if score > high_score:
             high_score = score
             # Harmanpal: play note and +1 here
@@ -430,6 +447,7 @@ while running:
         if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
             add_new_tile()
         # Harmanpal: update "+1" text pop-ups
+        text_group.update()
         # Gurmanpal, STEP 8: draw the score and high score at the top.
         #   1. Turn text into a picture:  your_font.render(text, True, WHITE)
         #      The text should say e.g. "Score: 5". Hint: an f-string like f"Score: {score}"
