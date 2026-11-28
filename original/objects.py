@@ -16,6 +16,8 @@ import pygame
 import random
 
 SCREEN = WIDTH, HEIGHT = 288, 512
+# AT: Same tile size as main.py. objects.py is a separate file, so the Tile class
+#     needs its own copy of these numbers.
 TILE_WIDTH = WIDTH // 4
 TILE_HEIGHT = 130
 
@@ -25,38 +27,64 @@ BLUE = (30, 144, 255)
 BLUE2 = (2, 239, 239)
 PURPLE = (191, 64, 191)
 
+# AT: Tile is one black piano tile. It's built on pygame's Sprite so it can be put
+#     in a Group (tile_group in main.py) and remove itself with kill().
 class Tile(pygame.sprite.Sprite):
+	# AT: Runs once when a tile is created. x and y are where it starts
+	#     (x picks the column), and win is the game window it draws on.
 	def __init__(self, x, y, win):
+		# AT: Run Sprite's own setup first, otherwise the tile can't join a sprite Group.
 		super(Tile, self).__init__()
 
 		self.win = win
+		# AT: Saves the starting position. It's never used again: rect below is what
+		#     actually tracks where the tile is.
 		self.x, self.y = x, y
 		self.color = BLACK
+		# AT: alive = True means 'not hit yet'. It becomes False when the player hits the
+		#     tile, which makes it fade and stops it counting as a miss at the bottom.
 		self.alive = True
 
+		# AT: A blank, tile-sized canvas to draw the tile on. SRCALPHA allows
+		#     see-through colours, needed for the faded look of a hit tile.
 		self.surface = pygame.Surface((TILE_WIDTH, TILE_HEIGHT), pygame.SRCALPHA)
+		# AT: rect stores the tile's position and size. Moving the tile just means
+		#     changing rect.y; main.py also uses rect for clicks and the bottom check.
 		self.rect = self.surface.get_rect()
 		self.rect.x = x
 		self.rect.y = y
 
+		# AT: Points for the blue circle and line drawn in the middle of the tile.
+		#     Only decoration, they don't affect the gameplay.
 		self.center = TILE_WIDTH//2, TILE_HEIGHT//2 + 15
 		self.line_start = self.center[0], self.center[1]-18
 		self.line_end = self.center[0], 20
 
+	# AT: Called every frame from main.py with the current speed.
 	def update(self, speed):
+		# AT: Move the tile down. In pygame a bigger y is lower on the screen.
 		self.rect.y += speed
+		# AT: Once the tile has gone off the bottom, delete it so thousands of
+		#     invisible tiles don't pile up below the screen and slow the game down.
 		if self.rect.y >= HEIGHT:
 			self.kill()
 
+		# AT: Not hit yet: draw it black with a purple and a cyan border, plus the blue
+		#     line and circle in the middle.
 		if self.alive:
 			pygame.draw.rect(self.surface, self.color, (0,0, TILE_WIDTH, TILE_HEIGHT))
 			pygame.draw.rect(self.surface, PURPLE, (0,0, TILE_WIDTH, TILE_HEIGHT), 4)
 			pygame.draw.rect(self.surface, BLUE2, (0,0, TILE_WIDTH, TILE_HEIGHT), 2)
 			pygame.draw.line(self.surface, BLUE, self.line_start, self.line_end, 3)
 			pygame.draw.circle(self.surface, BLUE, self.center, 15, 3)
+		# AT: Already hit: cover it with see-through black (alpha 90) so it looks faded.
+		#     Note: the canvas isn't cleared first, so this layer stacks up every frame and the
+		#     tile gets darker. In our version we clear it with surface.fill((0, 0, 0, 0)) first.
 		else:
 			pygame.draw.rect(self.surface, (0,0,0, 90), (0,0, TILE_WIDTH, TILE_HEIGHT))
 			
+		# AT: Stamp the tile's canvas onto the game window at the tile's position.
+		#     Nothing is visible until this line runs.
 		self.win.blit(self.surface, self.rect)
 
 class Text(pygame.sprite.Sprite):

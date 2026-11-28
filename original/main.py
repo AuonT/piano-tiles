@@ -26,7 +26,10 @@ from objects import Tile, Square, Text, Button, Counter
 
 pygame.init()
 SCREEN = WIDTH, HEIGHT = 288, 512
+# AT: Each of the 4 columns is a quarter of the window (288 / 4 = 72 px),
+#     so one tile fills exactly one column.
 TILE_WIDTH = WIDTH // 4
+# AT: How tall each tile is. 130 px means about 4 tiles fit on the 512 px screen.
 TILE_HEIGHT = 130
 
 info = pygame.display.Info()
@@ -94,6 +97,8 @@ sound_btn = Button(sound_on_img, (24, 24), WIDTH - WIDTH // 4 - 18, HEIGHT//2 + 
 
 # GROUPS & OBJECTS ***********************************************************
 
+# AT: A sprite Group holds every tile on screen, so one loop can move and draw
+#     them all, and tile.kill() removes a tile from the group automatically.
 tile_group = pygame.sprite.Group()
 square_group = pygame.sprite.Group()
 text_group = pygame.sprite.Group()
@@ -102,6 +107,8 @@ time_counter = Counter(win, gameover_font)
 
 # FUNCTIONS ******************************************************************
 
+# AT: Tile speed grows with the score (200 at the start, +5 per point) so the
+#     game gets harder the longer you last. It's turned into pixels per frame below.
 def get_speed(score):
 	return 200 + 5 * score
 
@@ -164,6 +171,9 @@ while running:
 			home_page = False
 			game_page = True
 
+			# AT: When Start is clicked, make the very first tile in a random column (0-3).
+			#     It starts one tile-height above the screen (y = -TILE_HEIGHT) so it slides
+			#     in from the top instead of suddenly appearing.
 			x = random.randint(0, 3)
 			t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)
 			tile_group.add(t)
@@ -177,6 +187,8 @@ while running:
 	if game_page:
 		time_counter.update()
 		if time_counter.count <= 0:
+			# AT: Every frame (once the 3-2-1 countdown is over), move each tile down by
+			#     `speed` pixels and redraw it. Tile.update is in objects.py.
 			for tile in tile_group:
 				tile.update(speed)
 
@@ -201,6 +213,9 @@ while running:
 
 						pos = None
 
+				# AT: If a tile that was never hit (still alive) reaches the bottom, the player missed it:
+				#     turn it red so they can see which one, play the buzzer, and end the game.
+				#     `if not game_over` makes this happen only once instead of every frame.
 				if tile.rect.bottom >= HEIGHT and tile.alive:
 					if not game_over:
 						tile.color = (255, 0, 0)
@@ -211,6 +226,10 @@ while running:
 				buzzer_fx.play()
 				game_over = True
 
+			# AT: This keeps tiles coming forever with no gaps. t is the newest tile ([-1] = last added).
+			#     When its top edge is about to come onto the screen (top + speed >= 0), add a new tile
+			#     in a random column directly on top of it. y = -TILE_HEIGHT - (0 - t.rect.top) is the
+			#     same as t.rect.top - TILE_HEIGHT, so the new tile touches the old one exactly.
 			if len(tile_group) > 0:
 				t = tile_group.sprites()[-1]
 				if t.rect.top + speed >= 0:
@@ -227,9 +246,12 @@ while running:
 			for i in range(4):
 				pygame.draw.line(win, WHITE, (TILE_WIDTH * i, 0), (TILE_WIDTH*i, HEIGHT), 1)
 
+			# AT: Turn get_speed's number into whole pixels per frame: 200 * 30 / 1000 = 6 px every frame
+			#     at the start. int() because you can't move part of a pixel.
 			speed = int(get_speed(score) * (FPS / 1000))
 
 			if game_over:
+				# AT: Freeze every tile in place once the game is over.
 				speed = 0
 
 				if overlay_index > 20:
@@ -250,6 +272,7 @@ while running:
 						pygame.mixer.set_num_channels(len(notes_list))
 
 						text_group.empty()
+						# AT: Replay: delete all the old tiles so the new round starts with an empty screen.
 						tile_group.empty()
 						score = 0
 						speed = 0
@@ -258,6 +281,8 @@ while running:
 
 						time_counter = Counter(win, gameover_font)
 
+						# AT: Replay: start the new round with one tile in a random column above the screen,
+						#     the same way the game first starts.
 						x = random.randint(0, 3)
 						t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)
 						tile_group.add(t)

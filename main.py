@@ -50,17 +50,15 @@ clock = pygame.time.Clock()
 # =============================================================================
 # Load Assets/ images and Fonts/ here (Part 1 and Part 5)
 background = pygame.image.load("Assets/bg.png")
-background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 background2 = pygame.image.load("Assets/bg2.png")
 red_overlay = pygame.image.load("Assets/red overlay.png")
 title = pygame.image.load("Assets/title.png")
 
-
 pygame.font.init()
 
-title_font = pygame.font.Font("Fonts/Alternity-8w7J.ttf", 60)
-text_font = pygame.font.Font("Fonts/Futura condensed.ttf", 30)
-text_font2 = pygame.font.Font("Fonts/Marker Felt.ttf", 30)
+title_font = pygame.font.Font("Alternity-8w7j.ttf", 60)
+text_font = pygame.font.Font("Futura condensed.ttf", 30)
+text_font2 = pygame.font.Font("Marker Felt.ttf", 30)
 
 piano_img = pygame.image.load('Assets/piano.png')
 piano_img = pygame.transform.scale(piano_img, (212, 212))
@@ -74,24 +72,76 @@ start_rect = start_img.get_rect(center=(WIDTH//2, HEIGHT-80))
 # =============================================================================
 # Load notes.json, buzzer sound and background music here (Part 4)
 buzzer_sound = pygame.mixer.Sound("Sounds/piano-buzzer.mp3") 
-pygame.mixer.music.load("Sounds/piano-bgmusic.mp3")
+pygame.mixer.music.load("Sounds/piano_bgmusic.mp3")
 pygame.mixer.music.set_volume(0.5)  #This sets the volume of the background music to a value from 0-1
 pygame.mixer.music.play(-1)  #This causes the bg music to loop infinetly until the game is closed
-
+overlay_counter = 0
 close_img = pygame.image.load('Assets/closeBtn.png')
 replay_img = pygame.image.load('Assets/replay.png')
 sound_on_img = pygame.image.load('Assets/soundOnBtn.png')
 sound_off_img = pygame.image.load('Assets/soundOffBtn.png')
 
-#close_btn = Button(close_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
-#replay_btn = Button(replay_img, (36, 36), WIDTH//2-18, HEIGHT//2+115)
-#sound_btn = Button(sound_on_img, (24, 24), WIDTH//4-18, HEIGHT//2+120)
+class Square(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        size = random.randint(10,30)
+        self.surface = pygame.Surface((size, size))
+        self.surface.fill(random.choice([WHITE, GRAY, BLUE]))
+        self.surface.set_alpha(120)
+        self.rect = self.surface.get_rect(center=(random.randint(0, WIDTH), -size))
+        self.fall_speed = random.randint(2, 5)
+        self.angle = 0
+        self.spin = ([-3, -2, 2, 3])
+def update(self):
+    self.rect.y += self.fall_speed
+    self.angle += self.spin
+    if self.rect.top > HEIGHT:
+        self.kill()
+        return
+    rotated_surface = pygame.transform.rotate(self.surface, self.angle)
+    win.blit(rotated, rotated.get_rect(center=self.rect.center))
+
+class Counter:
+    def __init__(self):
+        self.reset()
+    def reset(self):
+        self.count = 3
+        self.last_tick = None
+    def update(self):
+        now = pygame.time.get_ticks()
+        if self.last_tick is None:
+            self.last_tick = now
+        if self.count > 0 and now - self.last_tick >= 1000:
+            self.count -= 1
+            self.last_tick = now
+        if self.count > 0:
+            img = title_font.render(str(self.count), True, WHITE)
+            win.blit(img, img.get_rect(center=(WIDTH//2, HEIGHT//2)))
+time_counter = Counter()
+
+class Text(pygame.sprite.Sprite):
+    def __init__(self, x, y, text, colour):
+        super(). __init__()
+        self.image = text_font.render(text, True, colour)
+        self.rect = self.image.get_rect(center=center)
+        self.alpha = 255
+    def update(self):
+        self.rect.y -= 4
+        self.alpha -= 12
+        if self.alpha <= 0:
+            self.kill()
+            return
+        self.image.set_alpha(self.alpha)
+        win.blit(self.image, self.rect)
+
+
+
 # =============================================================================
 # GROUPS (Auon + Harmanpal)
 # =============================================================================
 tile_group = pygame.sprite.Group()     # Auon
-# text_group = pygame.sprite.Group()     # Harmanpal ("+1" pop-ups)
-# square_group = pygame.sprite.Group()   # Harmanpal (background squares)
+text_group = pygame.sprite.Group()     # Harmanpal ("+1" pop-ups)
+square_group = pygame.sprite.Group()   # Harmanpal (background squares)
 
 
 # =============================================================================
@@ -109,6 +159,10 @@ sound_on = True
 
 # =============================================================================
 # FUNCTIONS
+def play_buzzer():
+    if not sound_on:
+        return
+    buzzer_sound.play()
 # =============================================================================
 
 # --- Auon Tippu (AT): tiles ---
@@ -197,12 +251,22 @@ def handle_arrow_key(key):
     if pressed_column == target_column:
         target_tile.alive = False
         score += 1
+        text_group.add(Text("+1", target_tile.rect.center))
         if score > high_score:
             high_score = score
             # Harmanpal: play note and +1 here
+            note = notes_lists[notes_counts]
+            th = Thread(target=play_note, args=(note, f'Sounds/{note}.ogg'))
+            th.start()
+            th.join()
+            notes_count = (notes_count + 1) % len(notes_list)
+            num_tiles += 1
     else:
         game_over = True
         # Harmanpal: buzzer here
+        if pos:
+            buzzer_fx.play()
+            game_over = True
     # This runs every time the player presses an arrow key.
     # `key` tells you WHICH arrow was pressed (pygame.K_LEFT, K_DOWN, K_UP or K_RIGHT).
 
@@ -244,11 +308,15 @@ def handle_arrow_key(key):
 
 # --- Harmanpal Banwait (HB): sound and effects ---
 def play_note(notePath):
+    if not sound_on:
+        return
     pygame.mixer.Sound(notePath).play()
 
 with open('notes.json') as file: #This calls upon/opens the json file containing the lists
     notes_dict = json.load(file) #This creates a dictionary which stores the lists which contain song keys
-
+notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
+notes_counts = 0
+pygame.mixer.set_num_channels(len(notes_lists)) #This sets the number of channels to the length of the list so that all notes can be played at once
 
 
 
@@ -321,6 +389,12 @@ while running:
                 reset_game()
 
             # Harmanpal: M toggles sound
+            if event.key == pygame.K_m:
+                sound_on = not sound_on
+                if sound_on:
+                    pygame.mixer.music.unpause()
+                else:
+                    pygame.mixer.music.pause()
             # Gurmanpal, STEP 7: call handle_arrow_key here, but ONLY when ALL of these are true:
             #   - the key is an arrow key        (Hint: event.key in KEY_TO_COLUMN)
             #   - the game page is showing       (Hint: game_page)
@@ -328,15 +402,18 @@ while running:
             #   - later: the 3-2-1 countdown is finished (ask Harmanpal what to check)
             # Hint: ONE `if` line with `and` between the conditions, then call the
             # function on the next line and give it event.key
-            if event.key in KEY_TO_COLUMN and game_page and not game_over:
+            if event.key in KEY_TO_COLUMN and game_page and not game_over and time_counter.count == 0:
                 handle_arrow_key(event.key)
-                 #and whatever variable harman designates as countdown_finshed in this statement aswell
     
 
 
     # ---------- DRAW BACKGROUND ----------
     win.blit(background, (0, 0))   # Darius: replace with the background image
     # Harmanpal: update the falling background squares here
+    if random.random() < 0.05:
+        square_group.add(Square())
+    square_group.update()  
+    
 
     # ---------- HOME PAGE (Darius) ----------
     if home_page:
@@ -345,19 +422,15 @@ while running:
     # ---------- GAME PAGE ----------
     if game_page:
         # Harmanpal: 3-2-1 countdown
-        win.blit(piano_img, (WIDTH//8, HEIGHT//8))
-        win.blit(start_img, start_rect)
-        if pos and start_rect.collidepoint(pos):
-            home_page = False
-            game_page = True
+        if game_over:
+            time_counter.reset()
+        else:
+            time_counter.update()
+        
 
-            x = random.randint(0,3)
-            t = Tile(x * TILE_WIDTH, -TILE_HEIGHT, win)
-            tile_group.add(t)
             
-            notes_lists = notes_dict['1'] #This creates a variable which calls upon a certain list from the previous dictionary
-            notes_counts = 0
-            pygame.mixer.set_num_channels(len(notes_lists)) #This sets the number of channels to the length of the list so that all notes can be played at once
+            
+           
 
 
 
@@ -373,6 +446,7 @@ while running:
         if tile_group.sprites()[-1].rect.top + speed >= 0: #if the new tile is about to slide onto the screen add a new tile right above.
             add_new_tile()
         # Harmanpal: update "+1" text pop-ups
+        text_group.update()
         # Gurmanpal, STEP 8: draw the score and high score at the top.
         #   1. Turn text into a picture:  your_font.render(text, True, WHITE)
         #      The text should say e.g. "Score: 5". Hint: an f-string like f"Score: {score}"
@@ -393,13 +467,14 @@ while running:
 
         if game_over:
             speed = 0
+            if overlay_counter > 20:
+                win.blit(red_overlay, (0,0))
+            else:
+                red_overlay += 1
+            if red_overlay % 3 == 0:
+                win.blit(red_overlay, (0,0))
             # Harmanpal: flashing red overlay
-            if close_btn.draw(win):
-                running = False
-            if replay_btn.draw(win):
-                pass
-            if sound_btn.draw(win):
-                pass
+            
             # Darius: 
             draw_game_over()
 
