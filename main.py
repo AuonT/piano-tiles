@@ -23,7 +23,7 @@ pygame.init()
 # =============================================================================
 # SETTINGS (Darius) - shared numbers everyone uses
 # =============================================================================
-SCREEN = WIDTH, HEIGHT = 288, 512
+SCREEN = WIDTH, HEIGHT = 500, 1000
 TILE_WIDTH = WIDTH // 4
 TILE_HEIGHT = 130
 FPS = 30
@@ -258,25 +258,25 @@ def draw_home_page():
     win.blit(background, (0, 0))
 
     # Draw piano image
-    win.blit(piano_img, (piano_x, piano_y))
+    win.blit(piano_img, (WIDTH//2, 100))
 
     # Draw title
     title = title_font.render("Piano Tiles", True, BLACK)
-    win.blit(title, (title_x, title_y))
+    win.blit(title, (WIDTH//2, 300))
 
     # Draw instructions
     start_text = text_font.render("Press SPACE to start", True, BLACK)
-    win.blit(start_text, (text_x, text_y))
+    win.blit(start_text, (WIDTH//2, 250))
 
 
 def draw_game_over(): 
     win.blit(background, (0, 0))
 
     game_over_text = title_font.render("Game Over", True, BLACK)
-    win.blit(game_over_text, (x, y))
+    win.blit(game_over_text, (100, 40))
 
     replay = title_font.render("Replay?", True, BLACK)
-    win.blit(replay, (x, y))
+    win.blit(replay, (200, 300))
 
 
 def reset_game():
